@@ -1,0 +1,43 @@
+Add 2 Factor Authentication to Linux Login
+<b>PAM</b>
+Linux uses PAM for user authentication, which makes adding and chaining authentication methods very easy and fast.
+
+Look at your <b>/etc/pam.d/common-auth</b> file, and you'll see the <b>pam_unix.so</b> library which is the default unix password auth library. If you want to use other authentication methods, you just write a new line to load that PAM library file.
+
+To chain authentication methods, you just set the last method to sufficient and all others to required.
+
+
+<b>One-Time Password Generators</b>
+There used to be an ancient OTP generator library called OTPW and it generates a password list and it requires your to write down all the passwords and it'll pick a random one and require you to enter it for every authentication.
+
+It's really troublesome to use OTPW since the password list is simply HUGE. A time-based one time password generator like the google authenticator library seems more practical.
+
+<b>Google Authenticatior PAM Library</b>
+On debian, run
+
+<pre>sudo apt-get install libpam-google-authenticator -y</pre>
+
+And add this line:
+
+<pre>auth sufficient pam_google_authenticator.so</pre>
+
+right after the pam_unix.so line to the <b>/etc/pam.d/common-auth file</b>, and change the necessity of the pam_unix.so library to required.
+
+The code will look like this:
+
+# /etc/pam.d/common-auth
+
+auth required pam_unix.so nullok_secure
+auth sufficient pam_google_authenticator.so
+...
+
+<b> NOTE:</b>
+Be careful when manipulating PAM configuration files. You won't be able to login if something goes wrong, so be sure to keep an active session.
+
+Finally, generate a TOTP token url so that authenticators can generate passwords based on it.
+
+Just run
+
+<pre>google-authenticator</pre>
+
+After the configuration, you should have the qrcode which can be used in TOTP authenticator APPs. And try to login again, it should ask the authentication code after you enter your password! :D
