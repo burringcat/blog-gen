@@ -1,0 +1,16 @@
+Use emacsclient as Default Editor
+
+<b>The EMACS Server</b>
+EMACS can be started as a daemon(a program that runs in the background) by <b>emacs --daemon</b> which can be connected by <b>emacsclient</b>(use <b>emacsclient -c</b> to create a frame). You'll save a lot of time by using <b>emacsclient</b> since the <b>emacs.d</b> directory was loaded by the daemon(server) and the <b>emacsclient</b> is only its front-end.
+
+Note that the emacs server can be started automatically by <b>emacsclient -c</b> as well, if you set the <b>ALTERNATE_EDITOR</b> environment variable to empty(run <b>export ALTERNATE_EDITOR=""</b> in a unix shell, otherwise if there is no server, emacsclient will attempt to start another editor like vim). We can make use of that to setup our EDITOR to <b>emacsclient</b> by adding two exports to ".bashrc"(I assume you use bash as your shell):
+<b>export ALTERNATE_EDITOR=""</b>
+<b>export EDITOR="emacsclient -c"</b>
+
+<b>Wrapping emacsclient</b>
+It is obvious that <b>"emacsclient -c"</b> is a valid bash command but not an executable file, so if you run <b>\$EDITOR</b> in your shell it will complain. We can wrap this command with <a href="/runec.txt">a simple script</a>.
+
+I have the script at <b>~/.local/bin/runec</b> and <b>~/.local/bin</b> is in my <b>PATH</b> variable. Do remember to give the script execute permission(chmod +x ~/.local/bin/runec), then you can setup your EDITOR like this(ALTERNATE_EDITOR is not needed now b/c the <b>runec</b> script will take care of that):
+
+<b>export EDITOR="runec"</b>
+
