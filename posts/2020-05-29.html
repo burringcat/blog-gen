@@ -26,4 +26,4 @@ I have the compile script at <b>/root/.local/bin/compile-nginx-br.sh</b>, and it
 
 Edit <b>/etc/apt/apt.conf</b> file, and add a post-invoke hook.
 <b>DPkg::Post-Invoke {"/root/.local/bin/compile-nginx-br.sh";};</b>
-And you are probably done. since the script will check the current nginx version, you don't need to worry it will be run too many times.
+And you are probably done. Since the script will check the current nginx version, you don't need to worry about it being run too many times.
