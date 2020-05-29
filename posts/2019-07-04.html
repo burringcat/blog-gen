@@ -1,0 +1,9 @@
+Use Openvpn Behind a Socks5 Proxy and DNS Settings
+
+Add the <b>socks-proxy</b> directive to your openvpn configuration file and you are done.
+
+<b>socks-proxy 127.0.0.1 1080</b>
+
+But if you are like me, running a socks5 proxy on localhost or some private IP address, the connection to the upstream of the proxy should go through your local gateway. The <b>route</b> directive solves this problem. Suppose your upstream ip is <b>123.123.123.123</b>.
+
+<b>route 123.123.123.123 255.255.255.255 net_gateway</b>
