@@ -1,0 +1,21 @@
+#! /bin/sh
+d=$(pwd)
+mkdir -p $HOME/.local/share
+export BR_NGINX_VERSION_FILE="$HOME/.local/share/br-nginx-version"
+export NGINX_VERSION=$(echo $(nginx -v 2>&1)|sed "s~nginx version: nginx/~~")
+export NGINX_VERSION_WHEN_LAST_COMPILE=$(cat $BR_NGINX_VERSION_FILE)
+[ "$NGINX_VERSION" = "$NGINX_VERSION_WHEN_LAST_COMPILE" ] && exit
+export NGINX_NAME="nginx-$NGINX_VERSION"
+cd ~
+wget https://nginx.org/download/$NGINX_NAME.tar.gz && tar zxvf $NGINX_NAME.tar.gz
+rm $NGINX_NAME.tar.gz
+git clone https://github.com/eustas/ngx_brotli.git
+cd ngx_brotli && git submodule update --init && cd ~
+cd ~/$NGINX_NAME
+./configure --with-compat --add-dynamic-module=../ngx_brotli
+make modules
+sudo cp objs/*.so /etc/nginx/modules
+sudo chmod 644 /etc/nginx/modules/*.so
+echo $NGINX_VERSION > $BR_NGINX_VERSION_FILE
+cd $d
+rm ~/$NGINX_NAME -rf

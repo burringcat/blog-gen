@@ -1,0 +1,29 @@
+Auto compile brotli module for nginx on Debian
+<b>The brotli module</b>
+The brotli module is included in <b>"nginx plus"</b> but you still need to manually compile it if you are using the free edition. And I have a script for that, you can run it after you install the <b>nginx</b> package.
+
+It assumes you have <b>sudo</b> privilege. See the code <a href="./compile-nginx-br.txt">here</a>.
+
+The script will check the version of current installed nginx and the nginx when the brotli module was last compiled and download the source code for <b>nginx</b> and <b>brotli</b>, and it uses <b>make</b> to compile the code to brotli module's so(Shared Object) files. After that it copies <b>ngx_http_brotli_filter_module.so</b> and <b>ngx_http_brotli_static_module.so</b> to <b>/etc/nginx/modules</b>.
+
+To inform nginx to use the brotli module, add these 2 lines at the beginning of your <b>/etc/nginx/nginx.conf</b>
+<b>load_module modules/ngx_http_brotli_filter_module.so;</b>
+<b>load_module modules/ngx_http_brotli_static_module.so;</b>
+
+And you can turn on brotli by adding <b>brotli on;</b> and <b>brotli_static on;</b> in a <b>server</b> block. And you can set on which mime types you want to enable brotli compression like below.
+
+<b>brotli_types text/plain text/css text/javascript application/javascript text/xml application/xml image/svg+xml application/json font/ttf text/html image/png application/octet-stream; </b>
+
+Note that you can compress videos too, but seeking won't work on those videos.
+
+<b>Automating the process</b>
+
+The compiled module files are only compatible with the correspond version of nginx, so in case the nginx package gets updated, you need to compile them again.
+
+We can automate the compiling process by adding a dpkg hook.
+
+I have the compile script at <b>/root/.local/bin/compile-nginx-br.sh</b>, and it has the permisson to execute(<b>chmod +x /root/.local/bin/compile-nginx-br.sh</b>), and owned by apt(<b>chown apt /root/.local/bin/compile-nginx-br.sh</b>).
+
+Edit <b>/etc/apt/apt.conf</b> file, and add a post-invoke hook.
+<b>DPkg::Post-Invoke {"/root/.local/bin/compile-nginx-br.sh";};</b>
+And you are probably done. since the script will check the current nginx version, you don't need to worry it will be run too many times.
