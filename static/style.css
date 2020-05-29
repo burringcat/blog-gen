@@ -1,0 +1,18 @@
+@font-face {
+    font-family: 'Inconsolata';
+    src: url(./Inconsolata-Regular.ttf);
+}
+body {
+    font-family: 'Inconsolata', monospace;
+    font-size: large;
+    background-color: #222222;
+    color: #c2c2b0;
+}
+a {
+    color: #528b8b;
+    font-weight: bold;
+}
+p {
+    max-width: 80ch;
+    font-size: 1.1em;
+}
