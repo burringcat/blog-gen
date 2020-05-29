@@ -1,21 +1,21 @@
 Add 2 Factor Authentication to Linux Login
 <b>PAM</b>
-Linux uses PAM for user authentication, so look at your <b>/etc/pam.d/common-auth</b> file, and you'll see the <b>pam_unix.so</b> library which is the default unix password auth library.
+Linux uses PAM for user authentication, so look at <b>/etc/pam.d/common-auth</b>, and you'll see the default unix password authentication library <b>pam_unix.so</b>.
 
-To chain authentication methods, set the last method to sufficient and all others to required.
+To chain authentication libraries, set the last library to <b>sufficient</b> and all others to <b>required</b>.
 
 Before we change the configuration, be sure to keep an active session, b/c you won't be able to login if you make some mistake.
 
 <b>Google Authenticatior PAM Library</b>
-On debian, run
+On debian, install it with
 
-<pre>sudo apt-get install libpam-google-authenticator -y</pre>
+<b>sudo apt-get install libpam-google-authenticator -y</b>
 
 And add this:
 
-<pre>auth sufficient pam_google_authenticator.so</pre>
+<b>auth sufficient pam_google_authenticator.so</b>
 
-after <b>pam_unix.so</b> to <b>/etc/pam.d/common-auth</b>, and change the necessity of the pam_unix.so to <b>required</b>.
+in <b>/etc/pam.d/common-auth</b> after <b>pam_unix.so</b>, and change the necessity of <b>pam_unix.so</b> to <b>required</b>.
 
 The config will look like this:
 
@@ -26,6 +26,6 @@ auth sufficient pam_google_authenticator.so
 ...
 
 
-Finally, run <b>google-authenticator</b> to generate a TOTP token url, and you can use any authenticator for it(I recommend <a href="https://github.com/tadfisher/pass-otp">pass-otp</a>).
+Finally, run <b>google-authenticator</b> to generate a TOTP token url, and you can use any authenticator app or program for it(I recommend <a href="https://github.com/tadfisher/pass-otp">pass-otp</a>).
 
-Try to login again, it should ask for OTP after the password.
+Try to login again(you can do a login with <b>ssh username@localhost</b>), it should ask for an OTP after the password.
