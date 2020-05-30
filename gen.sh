@@ -40,9 +40,9 @@ do
     post_file_name="$(basename $p .html)"
     bold_title $p > $POST_TEMP_PATH
     POST_RENDERED="$(contentize $POST_TEMP_PATH)"
-    HTML=$(perl -pe "s|__BODY__|$POST_RENDERED|;s|__TITLE__|$(post_title $p)|" "$BASE_HTML")
     INFO="<a href='index.html' style='font-size:1.3em'>Back</a><br><span>(Date: ${post_file_name})</span>"
-    HTML="$INFO<br><hr>$HTML<br><hr>$INFO"
+    POST_RENDERED="$INFO<br><hr>$POST_RENDERED<br><hr>$INFO"
+    HTML=$(perl -pe "s|__BODY__|$POST_RENDERED|;s|__TITLE__|$(post_title $p)|" "$BASE_HTML")
     echo $HTML > $OUTPUT_DIR/$(basename $p)
     rm $POST_TEMP_PATH
 done
