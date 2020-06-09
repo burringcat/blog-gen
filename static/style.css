@@ -5,11 +5,11 @@
 body {
     font-family: 'Inconsolata', monospace;
     font-size: large;
-    background-color: #222222;
-    color: #c2c2b0;
+    background-color: #1d1f28;
+    color: #fdfdfd;
 }
 a {
-    color: #528b8b;
+    color: #8897f4;
     font-weight: bold;
 }
 p {
