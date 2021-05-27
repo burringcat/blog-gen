@@ -1,0 +1,61 @@
+Use Websocket to Connect to a Weechat Relay
+
+<h2>The Weechat Relay</h2>
+As is said in the <a href='https://weechat.org/files/doc/stable/weechat_user.en.html#relay_plugin'>weechat doc</a>, the weechat relay is a relay that can relay weechat data. Now they support the WebSocket for all relay protocols, so we can use <a href='https://www.nginx.com'>nginx</a> to reverse proxy the data.
+<h2>Setup a Weechat Relay</h2>
+<h3>Open Weechat</h3>
+Start a weechat relay, with the <b>weechat</b> protocol, and make it listen to port 9000, and now it can be connected using websocket.
+
+<b>/relay add weechat 9000</b>
+
+As we can see, <b>weechat</b> is the relay's <b>name</b> and <b>protocol</b>, and you can delete the relay by running <b>/relay del weechat</b>.
+
+<h3>Setup NGINX</h3>
+I usually have <b>weechat</b> running in a <b>tmux</b> buffer (or session?). Now we need to setup the reverse proxy in order to expose the <b>weechat relay</b> safely to the internet. Here is how I did it.
+
+Now assume we have a <b>debian</b> server and <b>weechat.example.com</b> is resolved to the server's public IP address(has an <b>A</b> record!).
+
+Install nginx, certbot and the nginx plugin for certbot.
+
+<b>
+sudo apt update
+sudo apt install nginx certbot python-certbot-nginx
+</b>
+
+Now create a configuration file for nginx (assuming you are <b>root</b>):
+
+<b>
+cd /etc/nginx/sites-available
+touch weechat.example.com.conf
+ln -svf $PWD/weechat.example.com.conf ../sites-enabled
+</b>
+Now edit <b>weechat.example.com.conf</b>. Here is an example (without SSL!):
+
+<b>
+server {
+	server_name weechat.example.com;
+
+	listen 80;
+	location / {
+		proxy_set_header Host $host;
+		proxy_set_header X-Real-IP $remote_addr;
+		proxy_pass http://127.0.0.1:9000;
+		proxy_http_version 1.1;
+		proxy_set_header Upgrade $http_upgrade;
+		proxy_set_header Connection "upgrade";
+	}
+}
+</b>
+
+Now run <b>nginx -t</b> to make sure there aren't any syntax errors and <b>nginx -s reload</b> to tell nginx to reload.
+
+Run <b>certbot</b> to generate the certificates for SSL and help us finish the setup (it'll edit your <b>weechat.example.com.conf</b> and reload nginx for you!).
+
+<h2>Connect to the Relay Using <b>weechat-android</b><h2>
+Here is an example:
+
+<img src='/img/weechat-android-settings.jpg'>
+
+<h2>Trouble Shooting</h2>
+<h3>403 Forbidden</h3>
+If you don't know what the variable <b>relay.network.websocket_allowed_origins</b> means, set it to <b>"*"</b> or <b>""</b> to allow you to access the WebSocket interface.

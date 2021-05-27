@@ -1,12 +1,12 @@
 Add One-Time Password to Linux Login
-<b>PAM</b>
+<h2>PAM</h2>
 Linux uses PAM for user authentication, so look at <b>/etc/pam.d/common-auth</b>, and you'll see the default unix password authentication library <b>pam_unix.so</b>.
 
 To chain authentication libraries, set the last library to <b>sufficient</b> and all others to <b>required</b>.
 
 Before we change the configuration, be sure to keep an active session, b/c you won't be able to login if you make some mistake.
 
-<b>Google Authenticatior PAM Library</b>
+<h2>Google Authenticatior PAM Library</h2>
 On debian, install it with
 
 <b>sudo apt-get install libpam-google-authenticator -y</b>
@@ -18,13 +18,13 @@ And add this:
 in <b>/etc/pam.d/common-auth</b> after <b>pam_unix.so</b>, and change the necessity of <b>pam_unix.so</b> to <b>required</b>.
 
 The config will look like this:
-
+<b>
 # /etc/pam.d/common-auth
 
 auth required pam_unix.so nullok_secure
 auth sufficient pam_google_authenticator.so
 ...
-
+</b>
 
 Finally, run <b>google-authenticator</b> to generate a TOTP token url, and you can use any authenticator app or program for it(I recommend <a href="https://github.com/tadfisher/pass-otp">pass-otp</a>).
 

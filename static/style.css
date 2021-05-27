@@ -16,3 +16,6 @@ p {
     max-width: 80ch;
     font-size: 1.1em;
 }
+b {
+    color: #d99797;
+}

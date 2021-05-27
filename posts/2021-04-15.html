@@ -1,0 +1,59 @@
+Register a New OFTC IRC Account and Setup CertFP With Weechat
+
+<h2>SASL(Simple Authentication and Security Layer)</h2>
+Normally, you will need your nickname and password in order to login to an irc server. This time, however, I'll tell you how to login with a client certificate.
+
+<h2>Generating Your Certificate</h2>
+Here,
+
+<b>openssl req -x509 -new -newkey rsa:4096 -sha256 -days 109600 -nodes -out irc.pem -keyout irc.pem</b>
+
+This command will put the private key and your certificate to `irc.pem`.
+
+Use the following command to check when your certificate expires (It will expire in 109600 days or rather 300 years):
+
+<b>openssl x509 -in irc.pem -noout -enddate</b>
+
+Put your certificate in `~/.weechat`(or to the environment variable ${WEECHAT_HOME})
+
+<b>mkdir -p ~/.weechat/certs</b>
+<b>mv irc.pem ~/.weechat/certs</b>
+
+<h2>Register at OFTC</h2>
+Open weechat and add the OFTC server:
+
+<b>/server add oftc irc.oftc.net/6697 -ssl</b>
+
+Then we do some basic settings:
+
+<b>
+/set irc.server.oftc.nicks "mynick,mynick2,mynick3,mynick4,mynick5"
+
+/set irc.server.oftc.username "My user name"
+
+/set irc.server.oftc.realname "My real name"
+
+/set irc.server.oftc.autoconnect on
+
+/set irc.server.oftc.ssl on
+
+/set irc.server.oftc.ssl_cert %h/certs/irc.pem
+
+/set irc.server.oftc.sasl_mechanism external
+</b>
+Then we connect to the server:
+<b>/connect oftc</b>
+Then tell NickServ to register your nickname:
+<b>/msg NickServ REGISTER YourPassword youremail@example.com</b>
+Then go to <a href='https://services.oftc.net'>services.oftc.net</a> to login with your nickname and password and <a href='https://services.oftc.net/account/verify'>verify your account</a>.
+
+Don't forget to tell <b>NickServ</b> to check your verification status:
+
+<b>/msg NickServ checkverify</b>
+
+<h2>Add the Certificate to Your Account</h2>
+
+<b>/msg NickServ CERT ADD</b>
+
+Disconnect and connect again, now you are using your certificate for authentication (as an external mechanism for SASL)!
+
