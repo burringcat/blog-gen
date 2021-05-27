@@ -17,7 +17,7 @@ d="$(pwd)"
 BASE_HTML="$d/templates/base.html"
 
 # index.html
-TITLE="王钊's Weblog"
+TITLE="Aleister Wang's Blog"
 BLOG_HTML="$d/templates/index.html"
 POST_DIR="$d/posts"
 POSTS_HTML=$(cat $BLOG_HTML)
